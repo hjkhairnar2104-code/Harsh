@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -32,38 +33,44 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(Customizer.withDefaults())
+                .cors(Customizer.withDefaults()) // ✅ ENABLE CORS
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ PREFLIGHT
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/equipment/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
-                .addFilterBefore(jwtAuthFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-
+    // ✅ CORS CONFIGURATION
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "https://wrangle-production.up.railway.app"
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        configuration.setAllowedMethods(List.of(
+                "GET", "POST", "PUT", "DELETE", "OPTIONS"
+        ));
+
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 
