@@ -1,11 +1,14 @@
 package org.example.farmer.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Booking {
 
     @Id

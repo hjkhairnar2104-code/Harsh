@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(
@@ -13,6 +15,7 @@ import lombok.Data;
         uniqueConstraints = @UniqueConstraint(columnNames = "email")
 )
 @Data
+
 public class User {
 
     @Id

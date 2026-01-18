@@ -4,9 +4,12 @@ package org.example.farmer.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Data
+
 public class Payment {
 
     @Id
