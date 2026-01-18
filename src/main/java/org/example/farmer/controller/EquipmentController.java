@@ -8,7 +8,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/equipment")
-@CrossOrigin
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://wrangle-production.up.railway.app"
+})
 public class EquipmentController {
 
     private final EquipmentService equipmentService;
