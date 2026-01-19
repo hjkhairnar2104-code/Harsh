@@ -1,27 +1,23 @@
 # ---------- Build Stage ----------
 FROM eclipse-temurin:17-jdk AS builder
-
 WORKDIR /app
 
-# Copy Maven wrapper and config
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+COPY backend/mvnw .
+COPY backend/.mvn .mvn
+COPY backend/pom.xml .
+RUN chmod +x mvnw
+RUN ./mvnw dependency:go-offline
 
-# Download dependencies (cached layer)
-RUN chmod +x mvnw && ./mvnw dependency:go-offline
-
-# Copy source and build
-COPY src src
-RUN ./mvnw package -DskipTests
+COPY backend/src src
+RUN ./mvnw clean package -DskipTests
 
 # ---------- Run Stage ----------
 FROM eclipse-temurin:17-jre
-
 WORKDIR /app
 
 COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
